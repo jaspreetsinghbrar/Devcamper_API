@@ -1,14 +1,14 @@
 const ErrorResponse = require("../utils/errorResponse");
 
 const errorHandler = (err, req, res, next) => {
-  const error = { ...err };
+  let error = { ...err };
   error.message = err.message;
   //Log for developer
   console.log(err.stack.red);
 
   //Mongoose bad ObjectId
   if (err.name === "CastError") {
-    const message = `Resource with id of ${err.value} not found`;
+    const message = `Resource not found`;
     error = new ErrorResponse(message, 404);
   }
 
@@ -25,7 +25,7 @@ const errorHandler = (err, req, res, next) => {
   }
 
   res
-    .status(error.statusCode || 500)
+    .sendStatus(error.statusCode || 500)
     .json({ success: false, error: error.message || "Server Error" });
 };
 
